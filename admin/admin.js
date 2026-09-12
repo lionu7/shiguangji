@@ -196,18 +196,18 @@
 
   // ---------- 发布 ----------
 
-  $("#buildBtn").addEventListener("click", async () => {
-    const btn = $("#buildBtn");
+  $("#publishBtn").addEventListener("click", async () => {
+    const btn = $("#publishBtn");
     btn.disabled = true;
     btn.textContent = "发布中…";
     try {
-      await api("/api/build", { method: "POST" });
-      toast("已发布，去「预览杂志」看看");
+      const res = await api("/api/publish", { method: "POST" });
+      toast(res.message || "已发布上线");
     } catch (err) {
       toast(err.message, true);
     } finally {
       btn.disabled = false;
-      btn.textContent = "发布";
+      btn.textContent = "发布上线";
     }
   });
 

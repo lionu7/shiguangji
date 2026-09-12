@@ -311,6 +311,27 @@ app.post("/api/build", (_req, res) => {
   }
 });
 
+app.post("/api/publish", (_req, res) => {
+  try {
+    execSync("node build.js", { cwd: ROOT, stdio: "pipe" });
+
+    execSync("git add -A", { cwd: ROOT, stdio: "pipe" });
+    const status = execSync("git status --porcelain", { cwd: ROOT, stdio: "pipe" }).toString().trim();
+
+    if (!status) {
+      return res.json({ ok: true, noChanges: true, message: "内容没有变化，无需发布" });
+    }
+
+    const msg = `更新内容 ${new Date().toISOString().slice(0, 10)}`;
+    execSync(`git commit -m "${msg}"`, { cwd: ROOT, stdio: "pipe" });
+    execSync("git push", { cwd: ROOT, stdio: "pipe" });
+
+    res.json({ ok: true, message: "已发布上线，线上约 1-2 分钟更新" });
+  } catch (err) {
+    res.status(500).json({ error: String(err.stderr || err.message || err) });
+  }
+});
+
 app.use((err, _req, res, _next) => {
   res.status(500).json({ error: String(err.message || err) });
 });
