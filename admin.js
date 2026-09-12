@@ -120,7 +120,7 @@ app.get("/api/issues", (_req, res) => {
   res.json(listIssues());
 });
 
-app.post("/api/issues", (req, res) => {
+app.post("/api/issues", upload.single("cover"), (req, res) => {
   const { number, title, subtitle = "", date = "", intro = "" } = req.body || {};
   if (!number || !title) return res.status(400).json({ error: "期号和标题必填" });
   if (findIssueDir(number)) return res.status(400).json({ error: `第 ${number} 期已存在` });
@@ -128,11 +128,49 @@ app.post("/api/issues", (req, res) => {
   const dirName = `${number}-${safeName(title) || "未命名"}`;
   const dir = path.join(ISSUES_DIR, dirName);
   fs.mkdirSync(path.join(dir, "originals"), { recursive: true });
+
+  let coverRel = "";
+  if (req.file) {
+    const ext = (path.extname(req.file.originalname) || ".jpg").toLowerCase();
+    const name = `cover${ext}`;
+    fs.copyFileSync(req.file.path, path.join(dir, "originals", name));
+    fs.unlinkSync(req.file.path);
+    coverRel = `originals/${name}`;
+  }
+
   fs.writeFileSync(
     path.join(dir, "issue.json"),
-    JSON.stringify({ number, title, subtitle, date, intro, cover: "" }, null, 2)
+    JSON.stringify({ number, title, subtitle, date, intro, cover: coverRel }, null, 2)
   );
   res.json({ ok: true, dirName });
+});
+
+app.put("/api/issues/:number", upload.single("cover"), (req, res) => {
+  const { number } = req.params;
+  const { title, subtitle = "", date = "", intro = "" } = req.body || {};
+  if (!title) return res.status(400).json({ error: "标题必填" });
+
+  const dirName = findIssueDir(number);
+  if (!dirName) return res.status(404).json({ error: "期不存在" });
+  const dir = path.join(ISSUES_DIR, dirName);
+
+  const jsonPath = path.join(dir, "issue.json");
+  const issueJson = JSON.parse(fs.readFileSync(jsonPath, "utf8"));
+  issueJson.title = title;
+  issueJson.subtitle = subtitle;
+  issueJson.date = date;
+  issueJson.intro = intro;
+
+  if (req.file) {
+    const ext = (path.extname(req.file.originalname) || ".jpg").toLowerCase();
+    const name = `cover${ext}`;
+    fs.copyFileSync(req.file.path, path.join(dir, "originals", name));
+    fs.unlinkSync(req.file.path);
+    issueJson.cover = `originals/${name}`;
+  }
+
+  fs.writeFileSync(jsonPath, JSON.stringify(issueJson, null, 2));
+  res.json({ ok: true });
 });
 
 app.get("/api/issues/:number/articles", (req, res) => {

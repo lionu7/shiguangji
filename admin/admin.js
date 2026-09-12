@@ -3,6 +3,7 @@
 
   let currentIssueNumber = null;
   let editingFile = null;
+  let editingIssueNumber = null;
 
   const $ = (sel) => document.querySelector(sel);
 
@@ -58,6 +59,7 @@
     const issue = (await api("/api/issues")).find((i) => String(i.number) === String(number));
     $("#issueTitle").textContent = issue ? `第 ${number} 期 · ${issue.title}` : `第 ${number} 期`;
     $("#newArticleBtn").disabled = false;
+    $("#editIssueBtn").disabled = false;
     renderArticles(articles);
   }
 
@@ -115,23 +117,51 @@
     })
   );
 
-  // ---------- 新建期 ----------
+  // ---------- 新建 / 编辑期 ----------
 
-  $("#newIssueBtn").addEventListener("click", () => openModal("#issueModal"));
+  $("#newIssueBtn").addEventListener("click", () => {
+    editingIssueNumber = null;
+    const form = $("#issueForm");
+    form.reset();
+    $("#issueNumberInput").disabled = false;
+    $("#issueModalTitle").textContent = "新建一期";
+    openModal("#issueModal");
+  });
+
+  $("#editIssueBtn").addEventListener("click", async () => {
+    const issue = (await api("/api/issues")).find((i) => String(i.number) === String(currentIssueNumber));
+    if (!issue) return;
+    editingIssueNumber = currentIssueNumber;
+    const form = $("#issueForm");
+    form.reset();
+    form.number.value = issue.number;
+    form.title.value = issue.title || "";
+    form.subtitle.value = issue.subtitle || "";
+    form.date.value = issue.date || "";
+    form.intro.value = issue.intro || "";
+    form.cover.value = "";
+    $("#issueNumberInput").disabled = true;
+    $("#issueModalTitle").textContent = "编辑本期";
+    openModal("#issueModal");
+  });
+
   $("#issueForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const form = e.target;
-    const data = Object.fromEntries(new FormData(form).entries());
+    const fd = new FormData(form);
     try {
-      await api("/api/issues", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      if (editingIssueNumber) {
+        await api(`/api/issues/${editingIssueNumber}`, { method: "PUT", body: fd });
+        toast("本期已更新");
+      } else {
+        await api("/api/issues", { method: "POST", body: fd });
+        toast("期已创建");
+      }
       closeModal("#issueModal");
       form.reset();
-      toast("期已创建");
+      editingIssueNumber = null;
       loadIssues();
+      if (currentIssueNumber) selectIssue(currentIssueNumber);
     } catch (err) {
       toast(err.message, true);
     }

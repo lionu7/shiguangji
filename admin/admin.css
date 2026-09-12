@@ -177,6 +177,12 @@ input, textarea, select { font-family: inherit; font-size: 14px; }
   font-weight: 600;
 }
 
+.main-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .article-list {
   display: flex;
   flex-direction: column;

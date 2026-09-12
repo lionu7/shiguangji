@@ -27,7 +27,10 @@
     <main class="main">
       <div class="main-head">
         <h2 id="issueTitle">请选择或新建一期</h2>
-        <button class="btn-primary" id="newArticleBtn" disabled>＋ 新建文章</button>
+        <div class="main-head-actions">
+          <button class="btn-ghost" id="editIssueBtn" disabled>编辑本期</button>
+          <button class="btn-primary" id="newArticleBtn" disabled>＋ 新建文章</button>
+        </div>
       </div>
       <div class="article-list" id="articleList"></div>
     </main>
@@ -36,10 +39,10 @@
   <!-- 新建期弹窗 -->
   <div class="modal-overlay hidden" id="issueModal">
     <div class="modal">
-      <h3>新建一期</h3>
+      <h3 id="issueModalTitle">新建一期</h3>
       <form id="issueForm">
         <label>期号
-          <input name="number" placeholder="如 002" required>
+          <input name="number" id="issueNumberInput" placeholder="如 002" required>
         </label>
         <label>标题
           <input name="title" placeholder="如 秋天" required>
@@ -52,6 +55,9 @@
         </label>
         <label>简介
           <textarea name="intro" rows="3" placeholder="可选"></textarea>
+        </label>
+        <label>封面图（编辑时留空则保留原封面）
+          <input name="cover" type="file" accept="image/*">
         </label>
         <div class="modal-actions">
           <button type="button" class="btn-ghost cancel">取消</button>
