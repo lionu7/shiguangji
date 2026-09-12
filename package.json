@@ -1,0 +1,16 @@
+{
+  "name": "rover-magazine",
+  "version": "1.0.0",
+  "description": "个人线上杂志 · 拾光記",
+  "type": "module",
+  "scripts": {
+    "build": "node build.js",
+    "start": "node admin.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "marked": "^12.0.0",
+    "multer": "^2.3.0",
+    "sharp": "^0.33.0"
+  }
+}

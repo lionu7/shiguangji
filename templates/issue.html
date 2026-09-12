@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{issueTitle}} · {{title}}</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body class="page-issue">
+  <header class="site-header">
+    <a class="site-title" href="../../index.html">{{title}}</a>
+    <p class="site-tagline">{{tagline}}</p>
+  </header>
+
+  <main class="issue">
+    <header class="issue-head">
+      <p class="issue-head-number">第 {{number}} 期</p>
+      <h1 class="issue-head-title">{{issueTitle}}</h1>
+      <p class="issue-head-subtitle">{{subtitle}}</p>
+      <p class="issue-head-date">{{date}}</p>
+      <p class="issue-head-intro">{{intro}}</p>
+    </header>
+
+    <div class="issue-list">
+      {{articles}}
+    </div>
+
+    <nav class="issue-pager">
+      {{prevHTML}}
+      {{nextHTML}}
+    </nav>
+  </main>
+
+  <footer class="site-footer">
+    <p>{{footer}}</p>
+  </footer>
+
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

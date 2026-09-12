@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理端 · 拾光記</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-title">拾光記 · 管理</div>
+    <div class="topbar-actions">
+      <a class="btn-ghost" href="/" target="_blank">预览杂志</a>
+      <button class="btn-primary" id="buildBtn">发布</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-head">
+        <h2>期数</h2>
+        <button class="btn-ghost btn-sm" id="newIssueBtn">＋ 新建</button>
+      </div>
+      <ul class="issue-list" id="issueList"></ul>
+    </aside>
+
+    <main class="main">
+      <div class="main-head">
+        <h2 id="issueTitle">请选择或新建一期</h2>
+        <button class="btn-primary" id="newArticleBtn" disabled>＋ 新建文章</button>
+      </div>
+      <div class="article-list" id="articleList"></div>
+    </main>
+  </div>
+
+  <!-- 新建期弹窗 -->
+  <div class="modal-overlay hidden" id="issueModal">
+    <div class="modal">
+      <h3>新建一期</h3>
+      <form id="issueForm">
+        <label>期号
+          <input name="number" placeholder="如 002" required>
+        </label>
+        <label>标题
+          <input name="title" placeholder="如 秋天" required>
+        </label>
+        <label>副标题
+          <input name="subtitle" placeholder="可选">
+        </label>
+        <label>日期
+          <input name="date" placeholder="如 2026-10">
+        </label>
+        <label>简介
+          <textarea name="intro" rows="3" placeholder="可选"></textarea>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost cancel">取消</button>
+          <button type="submit" class="btn-primary">创建</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 新建/编辑文章弹窗 -->
+  <div class="modal-overlay hidden" id="articleModal">
+    <div class="modal modal-lg">
+      <h3 id="articleModalTitle">新建文章</h3>
+      <form id="articleForm">
+        <label>标题
+          <input name="title" placeholder="文章标题" required>
+        </label>
+
+        <div class="field">
+          <span class="field-label">栏目</span>
+          <div class="segmented" id="sectionSeg">
+            <button type="button" class="seg-btn active" data-value="旅行志">旅行志</button>
+            <button type="button" class="seg-btn" data-value="摄影集">摄影集</button>
+            <button type="button" class="seg-btn" data-value="随笔">随笔</button>
+            <button type="button" class="seg-btn" data-value="好奇清单">好奇清单</button>
+          </div>
+          <input type="hidden" name="section" id="sectionInput" value="旅行志">
+        </div>
+
+        <label>日期
+          <input name="date" placeholder="如 2026-06-28">
+        </label>
+
+        <label>摘要
+          <input name="excerpt" placeholder="一句话摘要（可选）">
+        </label>
+
+        <label>封面图（编辑时留空则保留原封面）
+          <input name="cover" type="file" accept="image/*">
+        </label>
+
+        <label>正文
+          <textarea name="body" rows="8" placeholder="正文内容，段落之间用空行隔开。&#10;插图：单独一行输入 [图]；带说明输入 [图:说明文字]"></textarea>
+        </label>
+
+        <label>正文图片（可多选，编辑时新增会追加到已有图之后）
+          <input name="images" type="file" accept="image/*" multiple>
+        </label>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost cancel">取消</button>
+          <button type="submit" class="btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
